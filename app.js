@@ -7,7 +7,7 @@ const flash = require('connect-flash');
 
 const app = express();
 
-// Connect to mongoose
+// Connect to mongodb
 mongoose.connect('mongodb://localhost/node-app', { 
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -19,10 +19,6 @@ mongoose.connect('mongodb://localhost/node-app', {
     console.err(err);
 });
 
-// 引入模型
-require("./models/Idea");
-
-const Idea = mongoose.model('ideas');
 
 // Handlebars
 app.engine('handlebars', exphbs({
@@ -40,14 +36,14 @@ app.use(express.urlencoded({ extended: true }));
 // override with POST having ?_method=DELETE
 app.use(methodOverride('_method'))
 
-// session
+// express-session
 app.use(session({
     secret: 'secret',
     resave: false,
     saveUninitialized: true
 }))
 
-// flash
+// connect-flash
 app.use(flash());
 
 // 配置全局变量
@@ -57,102 +53,13 @@ app.use((req, res, next) => {
     next();
 })
 
-// 路由配置
-app.get("/", (req, res) => {
-    const title = "大家好"
-    res.render("index", {
-        title: title
-    });
-})
+//load routes
+const index = require("./routes/index")
+app.use("/", index);
 
-app.get("/about", (req, res) => {
-    res.render("about");
-})
+const ideas = require("./routes/ideas")
+app.use("/ideas", ideas)
 
-// 列表
-app.get("/ideas", (req, res) => {
-    Idea.find({})
-        .sort({date: "desc"})
-        .lean()
-        .then(ideas => {
-            res.render("ideas/index", {
-                ideas: ideas
-            });
-        });
-})
-
-// 添加
-app.get("/ideas/add", (req, res) => {
-    res.render("ideas/add");
-})
-
-app.post("/ideas", (req, res) => {
-    // console.log(req.body);
-    let errors = [];
-    if (!req.body.title) {
-        errors.push({text: "请输入标题！"});
-    }
-    if (!req.body.details) {
-        errors.push({text: "请输入详情！"});
-    }
-    
-    if (errors.length > 0) {
-        res.render("ideas/add", {
-            errors: errors,
-            title: req.body.title,
-            details: req.body.details
-        });
-    } else {
-        const newUser = {
-            title: req.body.title,
-            details: req.body.details
-        }
-        new Idea(newUser).save().then(idea => {
-            req.flash("successMsg", "数据添加成功");
-            res.redirect('/ideas');
-        }).catch(err => {
-            req.flash("errorMsg", "数据添加失败");
-            console.err(err);
-        });
-    }
-})
-
-// 编辑
-app.get("/ideas/edit/:id", (req, res) => {
-    Idea.findOne({_id: req.params.id})
-        .lean()
-        .then(idea => {
-            res.render("ideas/edit", {
-                idea: idea
-            });
-        });
-})
-
-app.put("/ideas/:id", (req, res) => {
-    Idea.findOne({_id: req.params.id})
-        .then(idea => {
-            idea.title = req.body.title;
-            idea.details = req.body.details;
-
-            idea.save().then(idea => {
-                req.flash("successMsg", "数据编辑成功");
-                res.redirect('/ideas');
-            })
-        })
-        .catch(err => {
-            req.flash("errorMsg", "数据编辑失败");
-            console.err(err);
-        })
-})
-
-// 删除
-app.delete("/ideas/:id", (req, res) => {
-    Idea.deleteOne({_id: req.params.id})
-        .then(() => {
-            req.flash("successMsg", "数据删除成功");
-            res.redirect('/ideas');
-        })
-})
 
 const port = 5000;
 app.listen(port, () => {
