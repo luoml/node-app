@@ -4,6 +4,11 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const session = require('express-session')
 const flash = require('connect-flash');
+const path = require('path');
+
+const index = require("./routes/index")
+const ideas = require("./routes/ideas")
+const users = require("./routes/users")
 
 const app = express();
 
@@ -19,7 +24,6 @@ mongoose.connect('mongodb://localhost/node-app', {
     console.err(err);
 });
 
-
 // Handlebars
 app.engine('handlebars', exphbs({
     defaultLayout: 'main'
@@ -31,6 +35,9 @@ app.set('view engine', 'handlebars');
 // urlencoded() 解析 application/x-www-form-urlencoded 请求体
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 加载静态资源文件
+app.use(express.static(path.join(__dirname, 'public')));
 
 // method-override
 // override with POST having ?_method=DELETE
@@ -54,12 +61,9 @@ app.use((req, res, next) => {
 })
 
 //load routes
-const index = require("./routes/index")
 app.use("/", index);
-
-const ideas = require("./routes/ideas")
-app.use("/ideas", ideas)
-
+app.use("/ideas", ideas);
+app.use("/users", users);
 
 const port = 5000;
 app.listen(port, () => {
