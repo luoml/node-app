@@ -30,21 +30,28 @@ router.post("/register", (req, res) => {
             password2: req.body.password2
         });
     } else {
-        const newUser = {
-            name: req.body.name,
-            email: req.body.email,
-            password: req.body.password
-        }
-        new User(newUser).save().then(user => {
-            req.flash("successMsg", "账号注册成功");
-            res.redirect('/users/login');
-        }).catch(err => {
-            req.flash("errorMsg", "账号注册失败");
-            res.redirect('/users/register');
-            console.err(err);
-        });
-    }
+        User.find({email: req.body.email}).then(user => {
+            if (user) {
+                req.flash("errorMsg", "注册邮箱已存在");
+                res.redirect('/users/register');
+            } else {
+                const newUser = {
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: req.body.password
+                }
 
+                new User(newUser).save().then(user => {
+                    req.flash("successMsg", "账号注册成功");
+                    res.redirect('/users/login');
+                }).catch(err => {
+                    req.flash("errorMsg", "账号注册失败");
+                    res.redirect('/users/register');
+                    console.err(err);
+                });
+            }
+        });        
+    }
 })
 
 // 登录
