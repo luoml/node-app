@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const router = express.Router();
 
@@ -31,7 +32,7 @@ router.post("/register", (req, res) => {
         });
     } else {
         User.find({email: req.body.email}).then(user => {
-            if (user) {
+            if (user.length > 0) {
                 req.flash("errorMsg", "注册邮箱已存在");
                 res.redirect('/users/register');
             } else {
@@ -57,8 +58,6 @@ router.post("/register", (req, res) => {
                         });
                     });
                 });
-
-                
             }
         });        
     }
