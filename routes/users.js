@@ -68,4 +68,29 @@ router.get("/login", (req, res) => {
     res.render("users/login");
 })
 
+router.post("/login", (req, res) => {
+    User.findOne({email: req.body.email}).then(user => {
+        if (!user) {
+            req.flash("errorMsg", "用户不存在");
+            res.redirect('/users/login');
+            return;
+        }
+
+        // 验证密码
+        bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+            if (err) throw err;
+            
+            if (isMatch) {
+                req.flash("successMsg", "登录成功");
+                res.redirect('/ideas');
+            } else {
+                req.flash("errorMsg", "密码错误");
+                res.redirect('/users/login');
+            }
+        });
+             
+             
+    });
+})
+
 module.exports = router;
