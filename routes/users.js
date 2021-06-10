@@ -41,14 +41,24 @@ router.post("/register", (req, res) => {
                     password: req.body.password
                 }
 
-                new User(newUser).save().then(user => {
-                    req.flash("successMsg", "账号注册成功");
-                    res.redirect('/users/login');
-                }).catch(err => {
-                    req.flash("errorMsg", "账号注册失败");
-                    res.redirect('/users/register');
-                    console.err(err);
+                // 密码加密
+                bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(newUser.password, salt, function(err, hash) {
+                        if (err) throw err;
+                        newUser.password = hash;
+
+                        new User(newUser).save().then(user => {
+                            req.flash("successMsg", "账号注册成功");
+                            res.redirect('/users/login');
+                        }).catch(err => {
+                            req.flash("errorMsg", "账号注册失败");
+                            res.redirect('/users/register');
+                            console.err(err);
+                        });
+                    });
                 });
+
+                
             }
         });        
     }

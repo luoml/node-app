@@ -5,6 +5,7 @@ const methodOverride = require('method-override');
 const session = require('express-session')
 const flash = require('connect-flash');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 const index = require("./routes/index")
 const ideas = require("./routes/ideas")
