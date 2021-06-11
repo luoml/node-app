@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 
 const router = express.Router();
 
@@ -68,29 +69,13 @@ router.get("/login", (req, res) => {
     res.render("users/login");
 })
 
-router.post("/login", (req, res) => {
-    User.findOne({email: req.body.email}).then(user => {
-        if (!user) {
-            req.flash("errorMsg", "用户不存在");
-            res.redirect('/users/login');
-            return;
-        }
+router.post("/login", (req, res, next) => {
 
-        // 验证密码
-        bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
-            if (err) throw err;
-            
-            if (isMatch) {
-                req.flash("successMsg", "登录成功");
-                res.redirect('/ideas');
-            } else {
-                req.flash("errorMsg", "密码错误");
-                res.redirect('/users/login');
-            }
-        });
-             
-             
-    });
+    passport.authenticate('local', { 
+        successRedirect: '/ideas',
+        failureRedirect: '/users/login',
+        failureFlash: true
+    })(req, res, next)
 })
 
 module.exports = router;

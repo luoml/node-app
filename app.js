@@ -5,10 +5,13 @@ const methodOverride = require('method-override');
 const session = require('express-session')
 const flash = require('connect-flash');
 const path = require('path');
+const passport = require('passport');
 
 const index = require("./routes/index")
 const ideas = require("./routes/ideas")
 const users = require("./routes/users")
+
+require("./config/passport")(passport)
 
 const app = express();
 
@@ -50,6 +53,10 @@ app.use(session({
     saveUninitialized: true
 }))
 
+// passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 // connect-flash
 app.use(flash());
 
@@ -57,6 +64,8 @@ app.use(flash());
 app.use((req, res, next) => {
     res.locals.successMsg = req.flash('successMsg');
     res.locals.errorMsg = req.flash('errorMsg');
+    res.locals.error = req.flash('error');
+    res.locals.user = req.user || null;
     next();
 })
 
