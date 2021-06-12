@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require('mongoose');
 
+const {ensureAuthenticated} = require('../config/auth');
+
 const router = express.Router();
 
 // 引入模型
@@ -9,8 +11,8 @@ const Idea = mongoose.model('ideas');
 
 // 课程
 // 列表
-router.get("/", (req, res) => {
-    Idea.find({})
+router.get("/", ensureAuthenticated, (req, res) => {
+    Idea.find({userId: req.user._id})
         .sort({date: "desc"})
         .lean()
         .then(ideas => {
@@ -21,7 +23,7 @@ router.get("/", (req, res) => {
 })
 
 // 添加
-router.get("/add", (req, res) => {
+router.get("/add", ensureAuthenticated, (req, res) => {
     res.render("ideas/add");
 })
 
@@ -44,7 +46,8 @@ router.post("/", (req, res) => {
     } else {
         const newIdea = {
             title: req.body.title,
-            details: req.body.details
+            details: req.body.details,
+            userId: req.user._id
         }
         new Idea(newIdea).save().then(idea => {
             req.flash("successMsg", "数据添加成功");
@@ -57,13 +60,18 @@ router.post("/", (req, res) => {
 })
 
 // 编辑
-router.get("/edit/:id", (req, res) => {
+router.get("/edit/:id", ensureAuthenticated, (req, res) => {
     Idea.findOne({_id: req.params.id})
         .lean()
         .then(idea => {
-            res.render("ideas/edit", {
-                idea: idea
-            });
+            if (idea.userId != req.user._id) {
+                req.flash("errorMsg", "非法操作！");
+                res.redirect('/ideas');
+            } else {
+                res.render("ideas/edit", {
+                    idea: idea
+                });
+            }            
         });
 })
 
