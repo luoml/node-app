@@ -70,12 +70,18 @@ router.get("/login", (req, res) => {
 })
 
 router.post("/login", (req, res, next) => {
-
     passport.authenticate('local', { 
         successRedirect: '/ideas',
         failureRedirect: '/users/login',
         failureFlash: true
     })(req, res, next)
+})
+
+// 退出
+router.get("/logout", (req, res) => {
+    req.logout();
+    req.flash("successMsg", "账号退出成功");
+    res.redirect('/users/login');
 })
 
 module.exports = router;
