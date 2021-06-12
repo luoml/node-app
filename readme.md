@@ -9,3 +9,8 @@ express-session : 在服务端存储session信息
 connect-flash : 依赖express-session，flash存储在session模块；消息写入到 flash 中，在跳转目标页中显示该消息  
 bcrypt : 密码加密  
 passport : 登录认证, 导航守卫  
+
+## 实现功能
+1、实现用户注册\登录\退出
+2、实现展现课程列表\添加课程\编辑课程\删除课程
+3、实现不同用户登录只能看到本人所添加的课程
