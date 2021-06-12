@@ -13,7 +13,7 @@ module.exports = (passport) => {
             // console.log(password);
 
             User.findOne({email: email}).then(user => {
-                console.log(user)
+                // console.log(user)
                 if (!user) {
                     return done(null, false, {message: "用户不存在"});
                 }
