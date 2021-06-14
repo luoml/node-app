@@ -14,3 +14,6 @@ NodeJS + Express + Handlebars + MongoDB 实现的一套简易课程管理系统�
 1、实现用户注册\登录\退出  
 2、实现展现课程列表\添加课程\编辑课程\删除课程  
 3、实现不同用户登录只能看到本人所添加的课程  
+
+## 演示地址  
+基于heroku[https://heroku.com/]、mongodb[https://cloud.mongodb.com/]搭建的在线演示地址[https://node-app-demo-2021.herokuapp.com/]  
