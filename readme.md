@@ -9,6 +9,7 @@ NodeJS + Express + Handlebars + MongoDB 实现的一套简易课程管理系统�
 5、connect-flash : 依赖express-session，flash存储在session模块；消息写入到 flash 中，在跳转目标页中显示该消息  
 6、bcrypt : 密码加密  
 7、passport : 登录认证, 导航守卫  
+8、cross-env : 跨平台设置和使用环境变量  
 
 ## 实现功能
 1、实现用户注册\登录\退出  
@@ -16,4 +17,4 @@ NodeJS + Express + Handlebars + MongoDB 实现的一套简易课程管理系统�
 3、实现不同用户登录只能看到本人所添加的课程  
 
 ## 演示地址  
-基于heroku[https://heroku.com/]、mongodb[https://cloud.mongodb.com/]搭建的在线演示地址[https://node-app-demo-2021.herokuapp.com/]  
+基于[heroku](https://heroku.com/)、[mongodb](https://cloud.mongodb.com/)搭建的[在线演示地址](https://node-app-demo-2021.herokuapp.com/)  
